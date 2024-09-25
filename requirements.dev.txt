@@ -1,0 +1,2 @@
+# needed for dev only not in deployment to server so created new file
+flake8>=3.9.2,<3.10
