@@ -1,6 +1,9 @@
 """
 db models
 """
+import uuid
+import os
+
 from django.conf import settings
 from django.db import models
 # AbstarctBaseUser - contain functionality of auth system
@@ -12,6 +15,15 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 
+# helper fun - determine where to path to stor image
+def recipe_image_file_path(instance, filename):
+    """generate file path for new recipe image"""
+    # take file name and extraxt the extension
+    ext = os.path.splitext(filename)[1]
+    # create own name by appending the exreacted extension eg png, jpg
+    filename = f'{uuid.uuid4()}{ext}'
+
+    return os.path.join('uploads', 'recipe', filename)
 
 # user manager
 class UserManager(BaseUserManager):
@@ -62,6 +74,8 @@ class Recipe(models.Model):
     # manytomany since have more tags in more recipes
     # any of tag or recipe can be associated with each other
     tags = models.ManyToManyField('Tag')
+    ingredients = models.ManyToManyField('Ingredient')
+    image = models.ImageField(null=True, upload_to=recipe_image_file_path)
 
     def __str__(self):
         return self.title
@@ -69,6 +83,17 @@ class Recipe(models.Model):
 
 class Tag(models.Model):
     """Tag object"""
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.name
+
+class Ingredient(models.Model):
+    """Ingredient object"""
     name = models.CharField(max_length=255)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

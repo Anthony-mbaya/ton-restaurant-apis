@@ -40,3 +40,5 @@ class UserAdmin(BaseUserAdmin):
 #  use the customized admin interface (UserAdmin) for managing User objects
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Recipe)
+admin.site.register(models.Tag)
+admin.site.register(models.Ingredient)
